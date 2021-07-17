@@ -1,10 +1,13 @@
 import TodoList from '../../components/Todo/TodoList';
 
 const Home = (props) => {
-  console.log('i am here oooo');
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/';
+  };
   return (
     <div>
-      <h1>This Home page</h1>
+      <button onClick={handleLogout}>Logout</button>
       <TodoList />
       {props.children}
     </div>

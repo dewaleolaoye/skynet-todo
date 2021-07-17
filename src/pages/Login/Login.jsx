@@ -1,25 +1,24 @@
-// import { SkynetClient } from 'skynet-js';
 import { navigate } from '@reach/router';
-import { SkynetClient } from 'skynet-js';
+import { useEffect, useState } from 'react';
+import { client, hostApp } from '../../constant';
 
 const Login = () => {
-  const client = new SkynetClient('https://siasky.net');
-  const hostApp = 'host-app.hns';
-
+  const [loading, SetLoading] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log(value, 'VALUE HERE');
+
+    SetLoading(true);
     try {
       const mySky = await client.loadMySky(hostApp);
 
       await mySky.requestLoginAccess();
+
       const checkLogin = await mySky.checkLogin();
 
       if (checkLogin) {
         localStorage.setItem('token', checkLogin);
-        // navigate('/home');
+
         window.location.href = '/home';
-        // window.navigator
       } else {
         navigate('/');
       }
@@ -28,13 +27,21 @@ const Login = () => {
     }
   };
 
+  useEffect(() => {
+    import('../Home/Home');
+  }, []);
+
   return (
     <div>
-      <h1>Login</h1>
+      <h1>Request Login Access</h1>
+      <p>Type something or I won't grant you access</p>
+
       <form onSubmit={handleSubmit}>
-        <input required />
-        <button>Login</button>
+        <input required placeholder='request access' />
+        <button>{loading ? 'loading...' : 'Submit'}</button>
       </form>
+
+      <p>Allow popups please</p>
     </div>
   );
 };

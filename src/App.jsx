@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { Redirect } from '@reach/router';
 import './App.css';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
+import { QueryClient, QueryClientProvider } from 'react-query';
 const AuthenticatedApp = lazy(() => import('./pages/Auth/Authenticated'));
 const UnauthenticatedApp = lazy(() => import('./pages/Auth/UnAuthenticated'));
 
@@ -13,21 +14,22 @@ function App() {
     setState(auth);
   }, [auth]);
 
-  // console.log(localStorage.getItem('token'), 'token');
-  console.log(auth, state, 'auth');
+  const queryClient = new QueryClient();
 
   return (
     <div className='App'>
       <ErrorBoundary>
         <Suspense fallback={<div>Loading Application</div>}>
-          {state ? (
-            <AuthenticatedApp />
-          ) : (
-            <>
-              <UnauthenticatedApp />
-              <Redirect noThrow from='/' to='/' />
-            </>
-          )}
+          <QueryClientProvider client={queryClient}>
+            {state ? (
+              <AuthenticatedApp />
+            ) : (
+              <>
+                <UnauthenticatedApp />
+                <Redirect noThrow from='/' to='/' />
+              </>
+            )}
+          </QueryClientProvider>
         </Suspense>
       </ErrorBoundary>
     </div>

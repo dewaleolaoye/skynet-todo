@@ -1,64 +1,90 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import './TodoList.css';
+import { nanoid } from 'nanoid';
+import { client, hostApp } from '../../constant';
+import useGetTodos from '../hooks/useGetTodos';
 
 const TodoList = () => {
-  // const [] = ''
-  const todoArray = [
-    {
-      key: 1,
-      title: 'Yam',
-    },
-    {
-      key: 2,
-      title: 'Buy Books',
-    },
-    {
-      key: 3,
-      title: 'Rent House',
-    },
-  ];
+  const [loading, setLoading] = useState(false);
+  const [value, setValue] = useState('');
+  const [todos, setTodos] = useState([]);
+
+  console.log(todos, 'THE TODOS');
+
+  const { data, isLoading } = useGetTodos();
+
+  useEffect(() => {
+    if (data) {
+      setTodos([data]);
+    }
+  }, [data]);
+
+  const addTask = async (e) => {
+    e.preventDefault();
+
+    setLoading(true);
+    try {
+      const mySky = await client.loadMySky(hostApp);
+
+      const jsonData = {
+        id: nanoid(),
+        title: value,
+      };
+
+      const { data: newTodo } = await mySky.setJSON(hostApp, jsonData);
+
+      if (newTodo) {
+        console.log(newTodo, 'NEW TODO');
+
+        setTodos([...todos, newTodo]);
+
+        setLoading(false);
+        setValue('');
+      }
+    } catch (error) {
+      console.log(error, 'ERROR');
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className='todoapp stack-large'>
-      <h1>TodoMatic</h1>
-      <form>
-        <h2 className='label-wrapper'>
-          <label htmlFor='new-todo-input' className='label__lg'>
-            What needs to be done?
-          </label>
-        </h2>
+    <div className='todoapp'>
+      <h1>Add Todos</h1>
+      <form onSubmit={addTask}>
         <input
           type='text'
-          id='new-todo-input'
-          className='input input__lg'
+          required
           name='text'
-          autoComplete='off'
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
         />
-        <button type='submit' className='btn btn__primary btn__lg'>
-          Add
-        </button>
+        <button type='submit'>{loading ? 'loading...' : 'Add'}</button>
       </form>
 
-      <ul
-        className='todo-list stack-large stack-exception'
-        aria-labelledby='list-heading'
-      >
-        {todoArray.map(({ key, title }) => {
-          return (
-            <li className='todo stack-small' key={key}>
-              <div className='c-cb'>
-                <input id='todo-0' type='checkbox' defaultChecked={true} />
-                <label className='todo-label' htmlFor='todo-0'>
-                  {title}
-                </label>
-              </div>
-              <div className='btn-group'>
-                <button type='button' className='btn btn__danger'>
-                  Delete <span className='visually-hidden'>{title}</span>
-                </button>
-              </div>
-            </li>
-          );
-        })}
+      <ul className='todo-list' aria-labelledby='list-heading'>
+        {todos &&
+          todos.map((todo) => {
+            return (
+              <li className='todo' key={nanoid()}>
+                <div>
+                  <input id='todo-0' type='checkbox' />
+                  <label className='todo-label' htmlFor='todo-0'>
+                    {todo.title}
+                  </label>
+                </div>
+                <div>
+                  <button type='button' className='btn btn__danger'>
+                    Delete
+                  </button>
+                </div>
+              </li>
+            );
+          })}
+
+        {isLoading && <p>Loading data...</p>}
+        {isLoading === false && todos.length <= 1 && (
+          <p>You do not have any todos</p>
+        )}
       </ul>
     </div>
   );

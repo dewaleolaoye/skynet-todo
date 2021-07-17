@@ -1,0 +1,21 @@
+.todoapp {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  height: 60vh;
+}
+
+ul {
+  list-style-type: none;
+}
+
+ul > li {
+  display: flex;
+  padding: 1rem 0;
+  justify-content: center;
+}
+
+li .todo-label {
+  margin: 0 1rem;
+}
