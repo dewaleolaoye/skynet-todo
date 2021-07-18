@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { client, hostApp } from '../../constant';
 
 const Login = () => {
+  console.log('login page');
   const [loading, SetLoading] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,7 +39,12 @@ const Login = () => {
 
       <form onSubmit={handleSubmit}>
         <input required placeholder='request access' />
-        <button>{loading ? 'loading...' : 'Submit'}</button>
+        <button
+          disabled={loading ? true : false}
+          style={{ cursor: loading ? 'not-allowed' : 'pointer' }}
+        >
+          {loading ? 'loading...' : 'Submit'}
+        </button>
       </form>
 
       <p>Allow popups please</p>

@@ -1,5 +1,6 @@
 import { useQuery } from 'react-query';
 import { client, hostApp } from '../../constant';
+import { handleLogout } from '../../utils/handleLogout';
 
 const getTodos = async () => {
   const token = window.localStorage.getItem('s_token');
@@ -10,9 +11,16 @@ const getTodos = async () => {
 
     const { data } = await mySky.getJSON(hostApp);
 
+    if (data) {
+      console.log(await mySky.userID(), 'ID');
+    }
     return data;
   } catch (error) {
-    console.log(error, 'ERROR');
+    // console.log(error, 'ERROR');
+    if (error.message === 'User seed not found') {
+      handleLogout();
+    }
+    console.log(error.message, 'error message');
   }
 
   // return data
