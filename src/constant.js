@@ -1,5 +1,10 @@
 import { genKeyPairFromSeed, SkynetClient } from 'skynet-js';
-const client = new SkynetClient('https://siasky.net');
+
+const portal =
+  window.location.hostname === 'localhost' ? 'https://siasky.net' : undefined;
+
+const client = new SkynetClient(portal);
+// const client = new SkynetClient('https://siasky.net');
 const hostApp = 'host-app.hns';
 const dataKey = 'myApp';
 
