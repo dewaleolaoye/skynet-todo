@@ -3,11 +3,13 @@ import './TodoList.css';
 import { nanoid } from 'nanoid';
 import { client, hostApp } from '../../constant';
 import useGetTodos from '../hooks/useGetTodos';
+import { handleLogout } from '../../utils/handleLogout';
 
 const TodoList = () => {
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState('');
   const [todos, setTodos] = useState([]);
+  const [error, setError] = useState('');
 
   console.log(todos, 'THE TODOS');
 
@@ -48,7 +50,7 @@ const TodoList = () => {
       }
       // }
     } catch (error) {
-      console.log(error, 'ERROR');
+      setError(error.message);
       setLoading(false);
     }
   };
@@ -63,65 +65,73 @@ const TodoList = () => {
 
       await mySky.setJSON(hostApp, filteredTodos);
     } catch (error) {
-      console.log(error, 'ERROR');
+      setError(error.message);
     }
   };
 
   return (
-    <div className='todoapp'>
-      <h1>Add Todos</h1>
-      {isLoading ? (
-        ''
-      ) : (
-        <form onSubmit={addTodo}>
-          <input
-            type='text'
-            required
-            name='text'
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-          />
-          <button
-            disabled={loading ? true : false}
-            type='submit'
-            style={{ cursor: loading ? 'not-allowed' : 'pointer' }}
-          >
-            {loading ? 'loading...' : 'Add'}
-          </button>
-        </form>
-      )}
+    <>
+      <div className='logout'>
+        <button onClick={handleLogout}>Logout</button>
+      </div>
 
-      {isLoading ? (
-        <p>Loading data...</p>
-      ) : (
-        <ul className='todo-list' aria-labelledby='list-heading'>
-          {todos.map((todo) => {
-            return (
-              <li className='todo' key={nanoid()}>
-                <div>
-                  <label className='todo-label' htmlFor='todo-0'>
-                    {todo.title}
-                  </label>
-                </div>
-                <div>
-                  <button
-                    type='button'
-                    className='btn btn__danger'
-                    onClick={() => deleteTask(todo.id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+      <div className='todoapp'>
+        <h1>Add Todos</h1>
+        {isLoading ? (
+          ''
+        ) : (
+          <form onSubmit={addTodo}>
+            <input
+              type='text'
+              required
+              name='text'
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+            />
+            <button
+              className='add-todo'
+              disabled={loading ? true : false}
+              type='submit'
+              style={{ cursor: loading ? 'not-allowed' : 'pointer' }}
+            >
+              {loading ? 'loading...' : 'Add'}
+            </button>
+          </form>
+        )}
 
-      {isLoading === false && todos.length === 0 && (
-        <p>You do not have any todos</p>
-      )}
-    </div>
+        {isLoading ? (
+          <p>Loading data...</p>
+        ) : (
+          <ul className='todo-list' aria-labelledby='list-heading'>
+            {todos.map((todo) => {
+              return (
+                <li className='todo' key={nanoid()}>
+                  <div>
+                    <p>{todo.title}</p>
+                  </div>
+
+                  <div>
+                    <button
+                      type='button'
+                      className='danger'
+                      onClick={() => deleteTask(todo.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
+        {isLoading === false && todos.length === 0 && (
+          <p>You do not have any todos</p>
+        )}
+
+        {error && <p className='error'>{error}</p>}
+      </div>
+    </>
   );
 };
 

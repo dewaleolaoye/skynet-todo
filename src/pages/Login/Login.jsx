@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { client, hostApp } from '../../constant';
 
 const Login = () => {
-  console.log('login page');
   const [loading, SetLoading] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,7 +32,7 @@ const Login = () => {
   }, []);
 
   return (
-    <div>
+    <div className='login'>
       <h1>Request Login Access</h1>
       <p>Type something or I won't grant you access</p>
 
@@ -47,7 +46,7 @@ const Login = () => {
         </button>
       </form>
 
-      <p>Allow popups please</p>
+      <p>** Allow popups please</p>
     </div>
   );
 };
