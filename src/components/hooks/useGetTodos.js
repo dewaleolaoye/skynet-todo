@@ -11,21 +11,14 @@ const getTodos = async () => {
 
     const { data } = await mySky.getJSON(hostApp);
 
-    if (data) {
-      console.log(await mySky.userID(), 'ID');
-    }
     return data;
   } catch (error) {
-    // console.log(error, 'ERROR');
     if (error.message === 'User seed not found') {
       handleLogout();
     }
-    console.log(error.message, 'error message');
   }
-
-  // return data
 };
 
 export default function useGetTodos() {
-  return useQuery('goldSilverSellRequest', getTodos);
+  return useQuery('getTodos', getTodos);
 }
