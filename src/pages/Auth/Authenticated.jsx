@@ -4,7 +4,7 @@ import Home from '../Home/Home';
 const UnAuthenticated = () => {
   return (
     <Router>
-      <Home path='/home'></Home>
+      <Home path='/'></Home>
     </Router>
   );
 };

@@ -18,7 +18,7 @@ const Login = () => {
       if (checkLogin) {
         localStorage.setItem('token', checkLogin);
 
-        window.location.href = '/home';
+        window.location.href = '/';
       } else {
         navigate('/');
       }
