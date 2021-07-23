@@ -9,8 +9,8 @@ const getTodos = async () => {
   try {
     const mySky = await client.loadMySky(hostApp);
 
-    // const { data } = await mySky.getJSON(hostApp);
-    const { data } = await mySky.getJSON(path);
+    const { data } = await mySky.getJSON(hostApp);
+    // const { data } = await mySky.getJSON(path);
 
     return data;
   } catch (error) {

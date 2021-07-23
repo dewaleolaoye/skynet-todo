@@ -75,8 +75,8 @@ const TodoList = () => {
     try {
       const mySky = await client.loadMySky(hostApp);
 
-      // await mySky.setJSON(hostApp, filteredTodos);
-      await mySky.setJSON(path, filteredTodos);
+      await mySky.setJSON(hostApp, filteredTodos);
+      // await mySky.setJSON(path, filteredTodos);
       setTodos(filteredTodos);
       setDeleteLoading(false);
     } catch (error) {
