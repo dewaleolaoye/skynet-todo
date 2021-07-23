@@ -1,23 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import './TodoList.css';
 import { nanoid } from 'nanoid';
-import { client, hostApp } from '../../constant';
+import { client, hostApp, path } from '../../constant';
 import useGetTodos from '../hooks/useGetTodos';
 import { handleLogout } from '../../utils/handleLogout';
 
 const TodoList = () => {
   const [loading, setLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [value, setValue] = useState('');
   const [todos, setTodos] = useState([]);
   const [error, setError] = useState('');
 
-  console.log(todos, 'THE TODOS');
+  // console.log(todos, 'THE TODOS');
 
   const { data, isLoading } = useGetTodos();
 
   useEffect(() => {
     if (data) {
+      // const timeOut = setTimeout(() => {
       setTodos(data);
+      // }, [1000]);
+
+      // return () => clearTimeout(timeOut);
     }
   }, [data]);
 
@@ -31,22 +36,24 @@ const TodoList = () => {
       title: value,
     };
 
-    if (todos.length !== 0) {
+    // const t = setTimeout(() => {
+    if (todos.length === 0) {
       todos.push(jsonData);
     } else {
       todos.push(jsonData);
     }
+    // }, [1000]);
 
     try {
       const mySky = await client.loadMySky(hostApp);
 
-      const { data: newTodo } = await mySky.setJSON(hostApp, todos);
+      // const { data: newTodo } = await mySky.setJSON(hostApp, todos);
+      const { data: newTodo } = await mySky.setJSON(path, todos);
 
       if (newTodo) {
-        console.log(newTodo, 'OLD TODO JOIN');
-
-        setLoading(false);
+        // clearTimeout(t);
         setValue('');
+        setLoading(false);
       }
       // }
     } catch (error) {
@@ -56,15 +63,24 @@ const TodoList = () => {
   };
 
   const deleteTask = async (id) => {
-    const filteredTodos = todos.filter((todo) => id !== todo.id);
-
-    setTodos(filteredTodos);
+    const filteredTodos = todos.filter((todo) => {
+      if (id === todo.id) {
+        console.log(id, 'the id');
+        console.log(todo, 'THE TOODO');
+        setDeleteLoading(true);
+      }
+      return id !== todo.id;
+    });
 
     try {
       const mySky = await client.loadMySky(hostApp);
 
-      await mySky.setJSON(hostApp, filteredTodos);
+      // await mySky.setJSON(hostApp, filteredTodos);
+      await mySky.setJSON(path, filteredTodos);
+      setTodos(filteredTodos);
+      setDeleteLoading(false);
     } catch (error) {
+      setDeleteLoading(false);
       setError(error.message);
     }
   };
@@ -115,8 +131,12 @@ const TodoList = () => {
                       type='button'
                       className='danger'
                       onClick={() => deleteTask(todo.id)}
+                      style={{
+                        cursor: deleteLoading ? 'not-allowed' : 'pointer',
+                      }}
+                      key={todo.id}
                     >
-                      Delete
+                      {deleteLoading ? 'deleting...' : 'Delete'}
                     </button>
                   </div>
                 </li>

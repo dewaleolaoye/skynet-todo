@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { client, hostApp } from '../../constant';
+import { client, hostApp, path } from '../../constant';
 import { handleLogout } from '../../utils/handleLogout';
 
 const getTodos = async () => {
@@ -9,7 +9,8 @@ const getTodos = async () => {
   try {
     const mySky = await client.loadMySky(hostApp);
 
-    const { data } = await mySky.getJSON(hostApp);
+    // const { data } = await mySky.getJSON(hostApp);
+    const { data } = await mySky.getJSON(path);
 
     return data;
   } catch (error) {
